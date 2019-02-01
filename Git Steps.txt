@@ -1,0 +1,101 @@
+1. create a new folder
+2. navigate to the new folder
+3. git init
+4. echo "............" > filename
+5. git add .
+6. git remote add origin <url>
+7. git commit -m "....."
+8. git push origin master
+
+9. Edit the file
+10. track it
+11. Create a new file
+12. edit the first file
+13. track them both
+14. stage them
+15. send to server
+
+16. Create new folder
+17. navigate to new folder
+18. clone repo
+19. edit
+20. send changes to server
+
+Branching:
+1. ensure you are in the correct "parent" branch
+2. checkout and create new branch
+3. make changes
+4. git add
+5. git commit
+6. git push (is in child branch)
+7. switch to parent branch
+8. merge in to parent from child branch
+9. git push (is in parent branch)
+
+Ignore files:
+1. Create a .gitignore file in the root folder
+2. List files and folders in the .gitignore file
+3. Save the .gitignore file
+4. add, commit, push
+
+RESET
+	--hard
+		- reverts all changes and also deletes new files
+	--mixed (default)
+		- only reverts changes, new files not lost
+	--soft <commit hash>
+		- works only with commits
+		- uncommits specific commit hash
+
+REVERT
+new folder
+git init
+create a new file
+git add
+git commit
+git log --oneline
+create a new file
+git add
+git commit
+git log --oneline
+create another file
+git add
+git commit
+git log --oneline
+	shows 2 commits
+	note the hash of each
+git revert HEAD		# to revert latest commit
+	# editor opens
+	# ESC, :q
+git log --oneline
+	# shows 3 commits
+	# new one for the "Revert"
+
+REBASE
+master
+feature1
+
+make 2 commits in feature1
+Parallely, 2 commits in master
+
+git checkout feature1
+git pull origin master
+
+finished work in feature1
+git checkout master
+git pull
+git merge feature1
+
+master
+feature1
+
+make 2 commits in feature1
+Parallely, 2 commits in master
+
+git checkout feature1
+git rebase master
+
+feature1 work done
+git checkout master
+git pull
+git merge feature1

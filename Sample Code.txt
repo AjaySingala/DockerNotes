@@ -1,0 +1,24 @@
+Sample .NET Core Project:
+https://github.com/MicrosoftDocs/pipelines-dotnet-core
+
+1. delete .git folder
+2. Create new project on Azure DevOps
+3. Go to Repos, copy url
+4. git init
+5. add folders to .gitignore
+6. git add .
+7. git commit -m "initial commit"
+8. git remote add origin <url>
+9. git push origin master
+
+Blobs:
+https://github.com/Azure-Samples/storage-blobs-dotnet-quickstart.git
+
+Queues:
+https://github.com/AjaySingala/QueueStorageSample.git
+
+Tables:
+https://github.com/AjaySingala/AzureTableStorageSample.git
+
+Function App:
+https://github.com/AjaySingala/AzureFunctionAppSample.git
