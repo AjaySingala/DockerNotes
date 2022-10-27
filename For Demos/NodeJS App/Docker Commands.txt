@@ -1,0 +1,27 @@
+# Build the image
+docker build -t asingala/node-web-app .
+# List images
+docker images
+# Run the image
+docker run -p 49160:8080 -d asingala/node-web-app
+# Get container ID
+docker ps
+
+docker logs <container-id>
+
+# Enter the container
+docker exec -it <container id> /bin/bash
+exit
+
+# Test the app
+# Get app's port
+docker ps
+
+curl -i localhost:<port>
+
+# Cleanup
+docker container stop $(docker container ls -aq)
+docker container rm $(docker container ls -aq)
+docker image rm asingala/node-web-app
+
+docker images

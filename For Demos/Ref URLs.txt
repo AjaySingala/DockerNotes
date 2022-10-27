@@ -1,0 +1,5 @@
+https://github.com/dotnet/dotnet-docker/tree/master/samples/aspnetapp
+https://docs.microsoft.com/en-us/dotnet/core/docker/build-container
+https://docs.docker.com/engine/examples/dotnetcore/
+https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/docker/building-net-docker-images?view=aspnetcore-3.1
+https://hjerpbakk.com/blog/2019/10/09/asp-net-core-docker-and-github-actions

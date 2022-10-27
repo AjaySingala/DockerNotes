@@ -1,0 +1,76 @@
+On Linux:
+sudo apt-get update -y
+sudo apt-get install docker-engine -y 
+sudo service docker start
+sudo docker run hello-world
+
+docker --version
+docker version
+docker info
+docker login
+
+docker run hello-world
+
+docker image ls
+
+docker container ls
+docker container ls --all
+docker container ls -a
+docker container ls -q
+docker container ls -aq
+
+docker container stop <container id>
+docker container rm <container id>
+
+docker image rm <image id>
+
+# Build an image using a "Dockerfile":
+# Use DOS CLI.
+docker build –t friendlyhello .
+# Run image (as container) by mapping ports:
+docker run -p 4000:80 friendlyhello
+
+#Execute commands on the container:
+docker exec <container id> <cmd>
+docker exec <container id> ls
+docker exec <container id> sh
+# interactive mode
+docker exec -i -t <container id> sh
+docker exec -i -t <container id> bash
+
+#Tag an image:
+docker tag <image_name> <docker_hub_username>/<repository>:<tag>
+E.g;:
+docker tag friendlyhello username/get-started:v2
+
+# Push tagged image to Docker hub:
+docker push username/get-started:v2
+
+# Run container from pushed image:
+docker run -p 4000:80 username/get-started:v2
+
+# Orchestration using Docker-compose.yml:
+docker swarm init
+# Deploy:
+docker stack deploy -c docker-compose.yml <stack_name>
+# Get the service ID and name for the service in our application:
+docker service ls
+# Get processes within the service deployed
+docker service ps <service_name>
+# Get list of containers (replicas) of application service:
+docker container ls --all
+
+# Scale the app:
+# Change value of "replicas" in Docker-compose.yml file. Then:
+docker stack deploy -c docker-compose.yml <stack_name>
+docker service ls
+docker container ls --all
+
+# Take down the app and the swarm
+docker stack rm <stack_name>
+docker swarm leave –f
+
+
+
+
+

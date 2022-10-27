@@ -1,0 +1,23 @@
+docker-compose up
+OR
+
+# Deploy:
+docker stack deploy -c docker-compose.yml <stack_name>
+# Get the service ID and name for the service in our application:
+docker service ls
+# Get processes within the service deployed
+docker service ps <service_name>
+# Get list of containers (replicas) of application service:
+docker container ls --all
+
+# Scale the app:
+# Change value of "replicas" in Docker-compose.yml file. Then:
+docker stack deploy -c docker-compose.yml <stack_name>
+docker service ls
+docker container ls --all
+
+# Take down the app and the swarm
+docker stack rm <stack_name>
+docker swarm leave –f
+
+
