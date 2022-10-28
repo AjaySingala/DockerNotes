@@ -1,0 +1,37 @@
+version: '3.4'
+services:
+  super-app-db:
+    image: mysql:8.0.28
+    ports:
+      - '3306:3306'
+    volumes:
+      - datafiles:/var/lib/mysql
+      - "./sql-scripts/setup.sql:/docker-entrypoint-initdb.d/1.sql"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: newuser
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: super-app
+
+  super-app-dotnet:
+    build:
+      context: ./dotnet
+      dockerfile: Dockerfile
+    depends_on:
+      - super-app-db
+    ports:
+      - "8080:80"
+    restart: always
+    environment:
+      - DBHOST=super-app-db
+      - DBPORT=3306
+      - DBPASSWORD=password
+
+  super-app-node:
+    build: ./node
+    ports:
+      - "3000:3000"
+
+volumes:
+  datafiles:
