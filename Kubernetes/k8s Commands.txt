@@ -1,0 +1,138 @@
+# Setup k8s dashboard on k8s-on-docker-for-desktop
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
+
+kubectl proxy
+
+$TOKEN=((kubectl -n kube-system describe secret default | Select-String "token:") -split " +")[1]
+kubectl config set-credentials docker-for-desktop --token="${TOKEN}"
+
+http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login
+
+Select "Kubeconfig"
+Then, select the "config" file from the following folder:
+c:\users\<username>\.kube\config
+
+Click on "Signin"
+View Dashboard
+
+# Run an app (single replica/instance):
+kubectl run kubernetes-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1 --port=8080
+
+kubectl get pods
+kubectl get deployments
+
+# Store pod name in an env var.
+export POD_NAME=$(kubectl get pods -o go-template --template '{{range.items}}{{.metadata.name}}{{"\n"}}{{end}}')
+echo POD_NAME is $POD_NAME
+
+# Store node port in an env var.
+# This, for some reason, does not work.
+# export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template='{{(index.spec.ports 0).nodePort}}')
+
+kubectl describe pods
+kubectl describe deployments
+
+# Run app from the container internally
+# first run bash on the container:
+kubectl exec -ti $POD_NAME bash
+# opens a bash prompt
+curl localhost:8080
+# exit out of the bash prompt from the container
+exit
+
+# Expose the deployment as a service so that we can access it from local PC
+kubectl expose deployment kubernetes-bootcamp  --type=NodePort
+
+kubectl describe services
+# Note the NodePort value from the above command
+# Access the app from local terminal or browser window
+curl localhost:<node_port_value>
+# OR in the browser: localhost:<note_port_value>
+
+# Scale up
+kubectl scale deployments/kubernetes-bootcamp --replicas=4
+
+kubectl get pods	# Note 4 pods running
+
+# Send multiple requests to see that requests go to different pods
+curl localhost:<node_port_value>
+
+# Scale down
+kubectl scale deployments/kubernetes-bootcamp --replicas=2
+
+kubectl get pods	# Note 2 pods running
+
+# Send multiple requests to see that requests go to different pods
+curl localhost:<node_port_value>
+
+# Rolling update
+kubectl set image deployments/kubernetes-bootcamp kubernetes-bootcamp=jocatalin/kubernetes-bootcamp:v2
+
+kubectl get pods	# Note 2 pods running
+
+# Send multiple requests to see that requests go to different pods
+curl localhost:<node_port_value>
+
+# Rollback to v1 image
+kubectl set image deployments/kubernetes-bootcamp kubernetes-bootcamp=gcr.io/google-samples/kubernetes-bootcamp:v1
+
+# Rollback to previous "working" version
+kubectl rollout undo deployments/kubernetes-bootcamp
+
+# Clean up
+kubectl delete services/kubernetes-bootcamp
+kubectl delete deployments/kubernetes-bootcamp
+
+# Watch pods being terminated
+kubectl get pods --watch
+
+# Press CTRL+C to stop watching and return to the terminal prompt
+
+# Use a Service to Access an Application in a Cluster
+kubectl apply -f ./hello-application.yaml
+
+kubectl get deployments hello-world
+kubectl describe deployments hello-world
+
+# Create a Service object that exposes the deployment:
+kubectl expose deployment hello-world --type=NodePort --name=example-service
+
+kubectl describe services example-service
+
+# List the pods that are running the Hello World application:
+kubectl get pods --selector="run=load-balancer-example" --output=wide
+
+curl http://localhost:<ip-address>
+OR
+in browser http://localhost:<ip-address>
+
+# Cleanup.
+kubectl delete services example-service
+kubectl delete deployments hello-world
+kubectl get pods
+
+# Secrets:
+# Create files needed for rest of example.
+echo -n 'admin' > ./username.txt
+echo -n '1f2d1e2e67df' > ./password.txt
+
+kubectl create secret generic db-user-pass --from-file=./username.txt --from-file=./password.txt
+# secret "db-user-pass" created
+
+# OR...
+kubectl create secret generic dev-db-secret --from-literal=username=devuser --from-literal=password=S\!B\\*d\$zDsb
+
+kubectl get secrets
+
+# Create secrets manually.
+echo -n 'admin' | base64
+YWRtaW4=
+echo -n '1f2d1e2e67df' | base64
+MWYyZDFlMmU2N2Rm
+
+# Specify the generated values in a yaml file and then:
+kubectl apply -f ./secret.yaml
+secret "mysecret" created
+
+# Store in yaml via stringData and then:
+kubectl get secret mysecret -o yaml
