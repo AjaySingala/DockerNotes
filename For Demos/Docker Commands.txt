@@ -3,7 +3,7 @@ sudo apt-get update -y
 sudo apt-get install docker-engine -y 
 sudo service docker start
 sudo docker run hello-world
-
+---
 docker --version
 docker version
 docker info
@@ -22,13 +22,26 @@ docker container ls -aq
 docker container stop <container id>
 docker container rm <container id>
 
+docker images
 docker image rm <image id>
 
+docker run busybox
+docker run busybox echo "hello from busybox"
+docker ps
+docker ps -a
+docker run -it busybox sh
+# ls
+# uptime
+# exit
+docker rm $(docker ps -a -q -f status=exited)
+
+
 # Build an image using a "Dockerfile":
-# Use DOS CLI.
+# Use DOS CLI or BASH.
 docker build –t friendlyhello .
 # Run image (as container) by mapping ports:
 docker run -p 4000:80 friendlyhello
+Here, 4000 is the local port and 80 is the container port.
 
 #Execute commands on the container:
 docker exec <container id> <cmd>
