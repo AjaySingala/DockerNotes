@@ -1,0 +1,32 @@
+az group create --name myResourceGroup --location eastus
+
+az acr create --resource-group myResourceGroup --name ajsacr --sku Basic
+
+az acr login --name ajsacr
+
+docker tag mcr.microsoft.com/azuredocs/azure-vote-front:v1 ajsacr.azurecr.io/azure-vote-front:v1
+
+docker push ajsacr.azurecr.io/azure-vote-front:v1
+
+az acr repository list --name ajsacr --output table
+
+az acr repository show-tags --name ajsacr --repository azure-vote-front --output table
+
+az aks create \
+    --resource-group myResourceGroup \
+    --name myAKSCluster \
+    --node-count 2 \
+    --generate-ssh-keys \
+    --attach-acr ajsacr
+
+az aks get-credentials --resource-group myResourceGroup --name myAKSCluster --overwrite-existing
+
+kubectl set image deployment azure-vote-front azure-vote-front=ajsacr.azurecr.io/azure-vote-front:v2
+
+az acr repository delete --name ajsacr --image  azure-vote-front:v1 --yes
+az acr repository delete --name ajsacr --image  azure-vote-front:v2 --yes
+
+az aks delete --name myAKSCluster --resource-group myResourceGroup --yes
+az acr repository delete --name ajsacr --repository azure-vote-front --yes
+az acr delete --name ajsacr --resource-group myResourceGroup --yes
+
