@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hey-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: hey
+        image: alpine:latest
+        command: ["/bin/sh", "-c"]
+        args:
+        - apk add --no-cache go && \
+          go install github.com/rakyll/hey@latest && \
+          /root/go/bin/hey -n 1000 -c 50 http://http-app
+      restartPolicy: Never
+  backoffLimit: 1

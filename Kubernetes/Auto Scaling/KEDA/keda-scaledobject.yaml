@@ -1,0 +1,15 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: http-scaler
+spec:
+  scaleTargetRef:
+    name: http-app
+  triggers:
+    - type: http
+      metadata:
+        url: "http://http-app"
+        port: "80"
+        path: "/"
+      authenticationRef:
+        name: ""

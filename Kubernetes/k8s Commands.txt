@@ -18,12 +18,21 @@ View Dashboard
 # Run an app (single replica/instance):
 kubectl run kubernetes-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1 --port=8080
 
+kubectl create deployment kubernetes-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1 --port=8080
+
 kubectl get pods
 kubectl get deployments
 
+kubectl proxy
+
+# Open a new terminal window.
 # Store pod name in an env var.
 export POD_NAME=$(kubectl get pods -o go-template --template '{{range.items}}{{.metadata.name}}{{"\n"}}{{end}}')
 echo POD_NAME is $POD_NAME
+
+# On Windows:
+set POD_NAME=<podname>
+echo %POD_NAME%
 
 # Store node port in an env var.
 # This, for some reason, does not work.
@@ -31,6 +40,12 @@ echo POD_NAME is $POD_NAME
 
 kubectl describe pods
 kubectl describe deployments
+
+curl http://localhost:8001/api/v1/namespaces/default/pods/$POD_NAME:8080/proxy
+In browser:
+http://localhost:8001/api/v1/namespaces/default/pods/<pod-name>:8080/proxy
+
+kubectl expose deployment/kubernetes-bootcamp --type="NodePort" --port 8080
 
 # Run app from the container internally
 # first run bash on the container:
@@ -48,6 +63,8 @@ kubectl describe services
 # Access the app from local terminal or browser window
 curl localhost:<node_port_value>
 # OR in the browser: localhost:<note_port_value>
+
+kubectl expose deployment/kubernetes-bootcamp --type="LoadBalancer" --port 8080
 
 # Scale up
 kubectl scale deployments/kubernetes-bootcamp --replicas=4
@@ -72,6 +89,9 @@ kubectl get pods	# Note 2 pods running
 
 # Send multiple requests to see that requests go to different pods
 curl localhost:<node_port_value>
+
+# Verify an update
+kubectl rollout status deployments/kubernetes-bootcamp
 
 # Rollback to v1 image
 kubectl set image deployments/kubernetes-bootcamp kubernetes-bootcamp=gcr.io/google-samples/kubernetes-bootcamp:v1
@@ -111,6 +131,13 @@ kubectl delete services example-service
 kubectl delete deployments hello-world
 kubectl get pods
 
+# Volumes:
+RWO: ReadWriteOnce
+ROX: ReadOnlyMany
+RWX: ReadWriteMany
+RWOP: ReadWriteOncePod
+
+
 # Secrets:
 # Create files needed for rest of example.
 echo -n 'admin' > ./username.txt
@@ -118,6 +145,9 @@ echo -n '1f2d1e2e67df' > ./password.txt
 
 kubectl create secret generic db-user-pass --from-file=./username.txt --from-file=./password.txt
 # secret "db-user-pass" created
+
+ kubectl create secret generic database-credentials --from-file=username=username.txt --from-file=password=password.txt --namespace=secrets-demo
+
 
 # OR...
 kubectl create secret generic dev-db-secret --from-literal=username=devuser --from-literal=password=S\!B\\*d\$zDsb

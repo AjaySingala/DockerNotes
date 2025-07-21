@@ -1,5 +1,3 @@
-include:
-   - infra.yaml
 services:
   web:
     build: .
@@ -10,3 +8,5 @@ services:
         - action: sync
           path: .
           target: /code
+  redis:
+    image: "redis:alpine"

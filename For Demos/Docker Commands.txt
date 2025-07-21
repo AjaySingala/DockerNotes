@@ -33,7 +33,7 @@ docker run -it busybox sh
 # ls
 # uptime
 # exit
-docker rm $(docker ps -a -q -f status=exited)
+docker container rm $(docker ps -a -q -f status=exited)
 
 
 # Build an image using a "Dockerfile":
@@ -83,7 +83,26 @@ docker container ls --all
 docker stack rm <stack_name>
 docker swarm leave –f
 
+Multi-container app:
+====================
+cd nginx-node-redis
+cd nginx
+docker build -t nginx .
+cd web
+docker build -t web .
+cd ..
+docker network create sample-app
+docker run -d  --name redis --network sample-app --network-alias redis redis
+docker run -d --name web1 -h web1 --network sample-app --network-alias web1 web
+docker run -d --name web2 -h web2 --network sample-app --network-alias web2 web
+docker run -d --name nginx --network sample-app  -p 80:80 nginx
+docker ps
+docker container ls
+docker container rm $(docker container stop $(docker container ls -q))
 
+docker compose up -d --build
+docker container ls
+docker images ls
 
 
 
